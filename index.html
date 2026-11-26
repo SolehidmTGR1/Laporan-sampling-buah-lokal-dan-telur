@@ -11,7 +11,7 @@ header{background:#0B4F2A;color:#fff;padding:16px;text-align:center}header h1{ma
 .card{background:#fff;border-radius:12px;padding:14px;box-shadow:0 2px 8px rgba(0,0,0,.08);margin-bottom:12px}
 label{font-size:13px;color:#555;font-weight:bold}input,select,textarea{width:100%;padding:10px;border:1px solid #ddd;border-radius:8px;margin:4px 0 9px;font-size:15px;background:#fff}
 .btn{width:100%;padding:12px;border:0;border-radius:9px;font-size:15px;font-weight:bold;cursor:pointer;margin-top:6px}
-.green{background:#0B4F2A;color:#fff}.wa{background:#25D366;color:#fff}.yellow{background:#FFC107;color:#000}.red{background:#fff;color:#D32F2F;border:1px solid #D32F2F}.blue{background:#1976D2;color:#fff}.orange{background:#FF9800;color:#fff}
+.green{background:#0B4F2A;color:#fff}.wa{background:#25D366;color:#fff}.yellow{background:#FFC107;color:#000}.red{background:#fff;color:#D32F2F;border:1px solid #D32F2F}.orange{background:#FF9800;color:#fff}
 #copyArea{position:absolute;left:-9999px;opacity:0}
 .row2{display:flex;gap:8px}.row2>div{flex:1}
 .mode{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}.mode button{flex:1;padding:10px;border:2px solid #0B4F2A;background:#fff;color:#0B4F2A;border-radius:9px;font-weight:bold;cursor:pointer;font-size:13px}.mode button.active{background:#0B4F2A;color:#fff}
@@ -36,6 +36,7 @@ label{font-size:13px;color:#555;font-weight:bold}input,select,textarea{width:100
 #boxTambah{display:none;background:#FFF8E1;border:2px solid #FF9800;border-radius:12px;padding:12px;margin-bottom:12px}
 #boxTambah h3{margin:0 0 8px;color:#0B4F2A;font-size:16px}
 #listTambahan{font-size:12px;background:#fff;border:1px solid #FF9800;border-radius:8px;padding:8px;margin-top:8px;white-space:pre-wrap}
+#pilihPLU{border:2px solid #0B4F2A !important;background:#E8F5E9 !important;font-weight:bold}
 </style>
 </head>
 <body>
@@ -68,17 +69,19 @@ label{font-size:13px;color:#555;font-weight:bold}input,select,textarea{width:100
 </div>
 
 <div class="card">
-<label>PLU</label>
-<input id="plu" inputmode="numeric" placeholder="Ketik PLU" oninput="cariPLU()" list="listPLU" autocomplete="off">
-<datalist id="listPLU"></datalist>
+<label>👆 Pilih PLU Dari Daftar - Klik Ini Dulu Pa</label>
+<select id="pilihPLU" onchange="pilihDariDropdown()"><option value="">-- Pilih PLU / Desc --</option></select>
+<label>PLU - Boleh Ketik Manual Juga</label>
+<input id="plu" inputmode="numeric" placeholder="Ketik PLU, contoh 20028593" oninput="cariPLU()" onchange="cariPLU()" onblur="cariPLU()" autocomplete="off">
+<button class="btn green" onclick="cariPLU()" style="margin-top:0;margin-bottom:10px">🔍 Cari / Isi Desc Otomatis</button>
 <div id="pluInfo"></div>
 <div id="kriteriaBox" class="kriteria"></div>
 <div id="warnBox" class="warn"></div>
 <div id="samplingInfo"></div>
 <label>Desc</label>
-<input id="item" class="auto" placeholder="" autocomplete="off">
+<input id="item" class="auto" placeholder="Otomatis muncul setelah pilih PLU" autocomplete="off">
 <label>Supplier</label>
-<input id="sup" class="editable" placeholder="" autocomplete="off">
+<input id="sup" class="editable" placeholder="Otomatis muncul setelah pilih PLU" autocomplete="off">
 <label>Satuan</label>
 <select id="satuan"><option value="Kg">Kg</option><option value="pcs">pcs</option><option value="pack">pack</option><option value="ctn">ctn</option></select>
 <div class="mode"><button id="mFisik" onclick="setMode('fisik')">Fisik Buah</button><button id="mDetail" class="active" onclick="setMode('detail')">Detail Buah</button><button id="mTelur" onclick="setMode('telur')">Telur</button><button id="mBrix" onclick="setMode('brix')">Brix Lama</button></div>
@@ -154,25 +157,6 @@ let dWrap=document.getElementById('detailWrap');let dHTML='';for(let i=1;i<=n;i+
 let fWrap=document.getElementById('fisikWrap');let fHTML='';for(let i=1;i<=n;i++){fHTML+="<div class='box'><div class='samplingTitle'>Sampling "+i+"</div><select id='s"+i+"'>"+optHTML(OPT.fisik)+"</select></div>";}fWrap.innerHTML=fHTML;
 let bWrap=document.getElementById('brixWrap');let bHTML="<div class='box'>";for(let i=1;i<=n;i++){bHTML+="<div class='brix-row'><b>Sampling "+i+"</b><select id='b"+i+"'>"+optHTML(BRIX_OPTS.slice(0,16))+"</select><select id='sb"+i+"'><option value='No Ok'>No Ok</option><option value='Ok'>Ok</option><option value=''>- Kosong -</option></select></div><select id='c"+i+"'><option value=''>- Tanpa Catatan -</option><option>Brix tidak masuk std</option><option>Fisik Ditolak</option></select>";}bHTML+="</div>";bWrap.innerHTML=bHTML;}
 function isiTelur(){['tKemasan','tAroma','tKotor','tRetak','tCangkang','tWarna','tLaser'].forEach(id=>{let el=document.getElementById(id);let arr=OPT.tKemasan;if(id==='tAroma')arr=OPT.tAroma;if(id==='tKotor')arr=OPT.tKotor;if(id==='tRetak')arr=OPT.tRetak;if(id==='tCangkang')arr=OPT.tCangkang;if(id==='tWarna')arr=OPT.tWarna;if(id==='tLaser')arr=OPT.tLaser;el.innerHTML=optHTML(arr);});}
-// ===== MENU TAMBAH PLU BARU =====
-function toggleTambah(){let b=document.getElementById('boxTambah');b.style.display=b.style.display==='block'?'none':'block';if(b.style.display==='block')tampilTambahan();}
-function tampilTambahan(){let t={};try{t=JSON.parse(localStorage.getItem('DB_TAMBAHAN')||'{}')}catch(e){t={}}let keys=Object.keys(t);let el=document.getElementById('listTambahan');if(!keys.length){el.innerHTML="Belum ada PLU tambahan. PLU bawaan: Durian 20028593 sudah ada.";return;}el.innerHTML="PLU Tambahan ("+keys.length+"):\n"+keys.map(k=>k+" - "+t[k].item+" - "+t[k].sup).join("\n");}
-function simpanPLUBaru(){
-let plu=document.getElementById('nPlu').value.trim();let item=document.getElementById('nItem').value.trim();let sup=document.getElementById('nSup').value.trim();
-if(!plu||!item){alert("PLU & Item wajib diisi Pa!");return;}
-let mode=document.getElementById('nMode').value;
-let data={item:item,sup:sup,mode:mode,satuan:document.getElementById('nSatuan').value,minBrix:parseFloat(document.getElementById('nBrix').value)||0,minUmur:mode=='telur'?27:0,grup:"lain",fallback:parseInt(document.getElementById('nFallback').value)||2,k:[document.getElementById('nK0').value||"-",document.getElementById('nK1').value||"-",document.getElementById('nK2').value||"-",document.getElementById('nK3').value||"-",document.getElementById('nK4').value||"-",document.getElementById('nK5').value||"-",document.getElementById('nK6').value||"-",document.getElementById('nK7').value||"-"],tgl:"",ket:mode=='telur'?"telur sesuai standard":"fisik buah sesuai standard"};
-if(mode=='telur'){data.tKemasan="";data.tAroma="Aroma tidak menyimpang / normal";data.tKotor="Bersih tanpa kotoran";data.tRetak="Tidak retak / tidak pecah";data.tCangkang="Cangkang mulus";data.tWarna="Warna coklat gelap";data.tLaser="Tidak perlu laser - bukan omega";}
-DB[plu]=data;
-let t={};try{t=JSON.parse(localStorage.getItem('DB_TAMBAHAN')||'{}')}catch(e){t={}}t[plu]=data;localStorage.setItem('DB_TAMBAHAN',JSON.stringify(t));
-renderPLU();tampilTambahan();
-document.getElementById('plu').value=plu;cariPLU();
-alert("PLU "+plu+" - "+item+" BERHASIL DISIMPAN Pa! Langsung bisa dipakai.");
-['nPlu','nItem','nSup','nK0','nK1','nK2','nK3','nK4','nK5','nK6','nK7'].forEach(id=>document.getElementById(id).value="");
-document.getElementById('boxTambah').style.display='none';
-}
-function hapusSemuaTambahan(){if(!confirm("Hapus semua PLU tambahan Pa? PLU bawaan tidak terhapus."))return;localStorage.removeItem('DB_TAMBAHAN');location.reload();}
-function loadTambahan(){try{let t=JSON.parse(localStorage.getItem('DB_TAMBAHAN')||'{}');Object.keys(t).forEach(k=>{DB[k]=t[k];});}catch(e){}}
 let DB={
 "10003320":{item:"Jeruk Bali Manis pcs",sup:"Kelompok tani sumber rezeki",mode:"detail",satuan:"pcs",minBrix:0,grup:"lain",fallback:2,k:["TIDAK TES BRIX","Min 1000 g / butir","Petik tua pohon (fresh)","Hijau dan kekuningan","Putih semburat merah","Keras dan tebal","Flek kering tidak tembus daging +/-10%","Taste manis & juicy"],tgl:"2026-06-11",ket:"fisik buah sesuai standard"},
 "10002619":{item:"Melon sky",sup:"Robert sugiarto",mode:"detail",satuan:"Kg",minBrix:9,grup:"melon",fallback:1,k:["MIN 9 (10 Pick Season, 9 Off Season)","1500-2500 g toleransi +/-25%","Petik tua pohon","Kehijauan","Biji tidak rontok dan tidak berair","Keras / Crunchy","Sedikit berair & biji rontok boleh, asal keras & tidak beraroma busuk","Dapat diterima jika tidak bertangkai | Rasa manis, beraroma segar"],tgl:"2026-06-12",ket:"fisik buah sesuai standard"},
@@ -215,7 +199,26 @@ let DB={
 "20101154":{item:"Telur Gado - Pindang Manis (Vacuum)",sup:"",mode:"telur",satuan:"pcs",minUmur:200,k:["Umur min 75% / 200+ hari / 9 bulan umur produk","1 Btr - Vacuum per butir, Box 10 btr","Ambient (Suhu Ruang)","Kemasan vacuum per butir, box terlapis plastik","-","Cangkang tidak retak, bersih","Aroma tidak menyimpang","Vacuum tidak terbuka / tidak rusak"],tgl:"",tKemasan:"Kemasan vacuum per butir, berlabel merk, tgl produksi & expired, box terlapis plastik",tAroma:"Aroma tidak menyimpang / normal",tKotor:"Bersih tanpa kotoran",tRetak:"Tidak retak / tidak pecah",tCangkang:"Cangkang mulus",tWarna:"Warna coklat gelap - sesuai",tLaser:"Tidak perlu laser - bukan omega",ket:"telur sesuai standard"},
 "20103801":{item:"Telur Gado - Balado (Vacuum)",sup:"",mode:"telur",satuan:"pcs",minUmur:200,k:["Umur min 75% / 200+ hari / 9 bulan umur produk","1 Btr - Vacuum per butir, Box 6 btr","Ambient (Suhu Ruang)","Kemasan vacuum per butir, box terlapis plastik","-","Cangkang tidak retak, bersih","Aroma tidak menyimpang","Vacuum tidak terbuka / tidak rusak"],tgl:"",tKemasan:"Kemasan vacuum per butir, berlabel merk, tgl produksi & expired, box terlapis plastik",tAroma:"Aroma tidak menyimpang / normal",tKotor:"Bersih tanpa kotoran",tRetak:"Tidak retak / tidak pecah",tCangkang:"Cangkang mulus",tWarna:"Warna coklat gelap - sesuai",tLaser:"Tidak perlu laser - bukan omega",ket:"telur sesuai standard"}
 };
-function renderPLU(){let dl=document.getElementById('listPLU');dl.innerHTML='';Object.keys(DB).sort().forEach(k=>{let d=DB[k];dl.innerHTML+="<option value='"+k+"'>"+d.item+"</option>";});}
+function toggleTambah(){let b=document.getElementById('boxTambah');b.style.display=b.style.display==='block'?'none':'block';if(b.style.display==='block')tampilTambahan();}
+function tampilTambahan(){let t={};try{t=JSON.parse(localStorage.getItem('DB_TAMBAHAN')||'{}')}catch(e){t={}}let keys=Object.keys(t);let el=document.getElementById('listTambahan');if(!keys.length){el.innerHTML="Belum ada PLU tambahan. PLU bawaan: Durian 20028593 sudah ada.";return;}el.innerHTML="PLU Tambahan ("+keys.length+"):\n"+keys.map(k=>k+" - "+t[k].item+" - "+t[k].sup).join("\n");}
+function simpanPLUBaru(){
+let plu=document.getElementById('nPlu').value.trim();let item=document.getElementById('nItem').value.trim();let sup=document.getElementById('nSup').value.trim();
+if(!plu||!item){alert("PLU & Item wajib diisi Pa!");return;}
+let mode=document.getElementById('nMode').value;
+let data={item:item,sup:sup,mode:mode,satuan:document.getElementById('nSatuan').value,minBrix:parseFloat(document.getElementById('nBrix').value)||0,minUmur:mode=='telur'?27:0,grup:"lain",fallback:parseInt(document.getElementById('nFallback').value)||2,k:[document.getElementById('nK0').value||"-",document.getElementById('nK1').value||"-",document.getElementById('nK2').value||"-",document.getElementById('nK3').value||"-",document.getElementById('nK4').value||"-",document.getElementById('nK5').value||"-",document.getElementById('nK6').value||"-",document.getElementById('nK7').value||"-"],tgl:"",ket:mode=='telur'?"telur sesuai standard":"fisik buah sesuai standard"};
+if(mode=='telur'){data.tKemasan="";data.tAroma="Aroma tidak menyimpang / normal";data.tKotor="Bersih tanpa kotoran";data.tRetak="Tidak retak / tidak pecah";data.tCangkang="Cangkang mulus";data.tWarna="Warna coklat gelap";data.tLaser="Tidak perlu laser - bukan omega";}
+DB[plu]=data;
+let t={};try{t=JSON.parse(localStorage.getItem('DB_TAMBAHAN')||'{}')}catch(e){t={}}t[plu]=data;localStorage.setItem('DB_TAMBAHAN',JSON.stringify(t));
+renderPLU();tampilTambahan();
+document.getElementById('plu').value=plu;document.getElementById('pilihPLU').value=plu;cariPLU();
+alert("PLU "+plu+" - "+item+" BERHASIL DISIMPAN Pa! Langsung bisa dipakai.");
+['nPlu','nItem','nSup','nK0','nK1','nK2','nK3','nK4','nK5','nK6','nK7'].forEach(id=>document.getElementById(id).value="");
+document.getElementById('boxTambah').style.display='none';
+}
+function hapusSemuaTambahan(){if(!confirm("Hapus semua PLU tambahan Pa? PLU bawaan tidak terhapus."))return;localStorage.removeItem('DB_TAMBAHAN');location.reload();}
+function loadTambahan(){try{let t=JSON.parse(localStorage.getItem('DB_TAMBAHAN')||'{}');Object.keys(t).forEach(k=>{DB[k]=t[k];});}catch(e){}}
+function renderPLU(){let sel=document.getElementById('pilihPLU');if(!sel)return;sel.innerHTML='<option value="">-- Pilih PLU / Desc --</option>';Object.keys(DB).sort().forEach(k=>{let d=DB[k];let o=document.createElement('option');o.value=k;o.textContent=k+' - '+d.item;sel.appendChild(o);});}
+function pilihDariDropdown(){let v=document.getElementById('pilihPLU').value;if(!v)return;document.getElementById('plu').value=v;cariPLU();}
 function setSelect(id,val){let el=document.getElementById(id);if(!el)return;let ada=[...el.options].some(o=>o.value==val);if(val && !ada){let o=document.createElement('option');o.value=val;o.textContent=val;el.appendChild(o);}el.value=val||"";}
 function hitungSampling(){let s=document.getElementById('samplingInfo');if(MODE=='telur'){let ctn=parseFloat(document.getElementById('poCtn').value)||0;let po=parseFloat(document.getElementById('poKg').value)||ctn;let base=ctn||po;if(!base){s.style.display="none";return;}let txt="";if(base<50)txt="SAMPLING TELUR: Qty PO "+base+" Ctn (< 50 Ctn) = SORTIR HABIS";else if(base<=100)txt="SAMPLING TELUR: Qty PO "+base+" Ctn (50-100 Ctn) = SAMPLING 20% = "+(base*0.2).toFixed(1)+" Ctn";else txt="SAMPLING TELUR: Qty PO "+base+" Ctn (> 100 Ctn) = SAMPLING 15% = "+(base*0.15).toFixed(1)+" Ctn";s.innerHTML=txt;s.style.display="block";return;}
 let qty=parseFloat(String(document.getElementById('terimaKg').value).replace(',','.'))||0;let item=getVal('item');let grup=grupDariItem(item);GRUP=grup;let jml=null;let label='';
@@ -223,8 +226,8 @@ if(grup!=='lain' && qty>0){jml=hitungJmlDariQty(qty,grup);label="Jumlah Sampling
 else{let d=DB[getVal('plu')];if(d && d.fallback){jml=d.fallback;label="Jumlah Sampling : "+jml+" Sampling - "+item;}}
 if(jml){JML_SAMPLING=jml;buildSampling();s.innerHTML=label;s.style.display="block";}else{s.style.display="none";}}
 function cekBrix(){let w=document.getElementById('warnBox');if(!MINBRIX){w.style.display="none";return;}let kurang=[];for(let i=1;i<=JML_SAMPLING;i++){let el=document.getElementById('d'+i+'Brix');if(!el)continue;let v=parseFloat(String(el.value).replace(",","."));if(!isNaN(v)&&v<MINBRIX)kurang.push("Sampling "+i+" Brix "+v+" < Minimal SOP "+MINBRIX);}if(kurang.length){w.innerHTML="BRIX DI BAWAH SOP: "+kurang.join(" | ")+" - Konfirmasi BM/DBM.";w.style.display="block";}else{w.style.display="none";}}
-function cariPLU(){let p=document.getElementById('plu').value.trim();let info=document.getElementById('pluInfo');let kBox=document.getElementById('kriteriaBox');if(!p){info.innerHTML="";kBox.style.display="none";MINBRIX=0;cekBrix();return;}if(DB[p]){let d=DB[p];MINBRIX=d.minBrix||0;MINUMUR=d.minUmur||27;document.getElementById('item').value=d.item;if(d.sup)document.getElementById('sup').value=d.sup;document.getElementById('satuan').value=d.satuan||"Kg";setMode(d.mode);if(d.tgl)document.getElementById('tgl').value=d.tgl;if(d.mode=='telur'){setSelect('tKemasan',d.tKemasan||"");setSelect('tAroma',d.tAroma||"");setSelect('tKotor',d.tKotor||"");setSelect('tRetak',d.tRetak||"");setSelect('tCangkang',d.tCangkang||"");setSelect('tWarna',d.tWarna||"");setSelect('tLaser',d.tLaser||"");document.getElementById('ketT').value=d.ket||"telur sesuai standard";setKesT('Di terima');}
-hitungSampling();info.innerHTML="<span class='ok'>PLU ditemukan</span>";let labels=d.mode=='telur'?["Umur / Sisa Umur","Isi & Berat","Penyimpanan","Kemasan","Warna","Cangkang","Aroma","Catatan SOP"]:["Brix","Size","Kematangan","Kulit","Daging / Bagian Tengah","Tekstur","Toleransi","Catatan"];let title=d.mode=='telur'?"KRITERIA TELUR - ":"KRITERIA - ";let sop=d.mode=='telur'?"SOP Juli 2026":"SOP 27 Feb 2025";let html="<b>"+title+d.item.toUpperCase()+" - PLU "+p+" - "+sop+"</b><br>";labels.forEach((lb,i)=>{html+="<div class='row'><span>"+lb+"</span><span>"+(d.k[i]||"-")+"</span></div>";});if(d.grup && d.grup!=='lain')html+="<div class='row'><span>Grup Sampling</span><span>"+d.grup.toUpperCase()+" - Lihat Qty Tiba</span></div>";kBox.innerHTML=html;kBox.style.display="block";cekBrix();}else{info.innerHTML="<span class='baru'>PLU baru, isi Desc & Supplier - Atau klik ➕ Tambah PLU Baru di atas</span>";kBox.style.display="none";MINBRIX=0;cekBrix();}}
+function cariPLU(){let p=document.getElementById('plu').value.trim();let info=document.getElementById('pluInfo');let kBox=document.getElementById('kriteriaBox');if(!p){info.innerHTML="";kBox.style.display="none";MINBRIX=0;cekBrix();return;}if(DB[p]){let d=DB[p];MINBRIX=d.minBrix||0;MINUMUR=d.minUmur||27;document.getElementById('item').value=d.item;if(d.sup)document.getElementById('sup').value=d.sup;document.getElementById('satuan').value=d.satuan||"Kg";let sel=document.getElementById('pilihPLU');if(sel)sel.value=p;setMode(d.mode);if(d.tgl)document.getElementById('tgl').value=d.tgl;if(d.mode=='telur'){setSelect('tKemasan',d.tKemasan||"");setSelect('tAroma',d.tAroma||"");setSelect('tKotor',d.tKotor||"");setSelect('tRetak',d.tRetak||"");setSelect('tCangkang',d.tCangkang||"");setSelect('tWarna',d.tWarna||"");setSelect('tLaser',d.tLaser||"");document.getElementById('ketT').value=d.ket||"telur sesuai standard";setKesT('Di terima');}
+hitungSampling();info.innerHTML="<span class='ok'>✅ PLU ditemukan - "+d.item+"</span>";let labels=d.mode=='telur'?["Umur / Sisa Umur","Isi & Berat","Penyimpanan","Kemasan","Warna","Cangkang","Aroma","Catatan SOP"]:["Brix","Size","Kematangan","Kulit","Daging / Bagian Tengah","Tekstur","Toleransi","Catatan"];let title=d.mode=='telur'?"KRITERIA TELUR - ":"KRITERIA - ";let sop=d.mode=='telur'?"SOP Juli 2026":"SOP 27 Feb 2025";let html="<b>"+title+d.item.toUpperCase()+" - PLU "+p+" - "+sop+"</b><br>";labels.forEach((lb,i)=>{html+="<div class='row'><span>"+lb+"</span><span>"+(d.k[i]||"-")+"</span></div>";});if(d.grup && d.grup!=='lain')html+="<div class='row'><span>Grup Sampling</span><span>"+d.grup.toUpperCase()+" - Lihat Qty Tiba</span></div>";kBox.innerHTML=html;kBox.style.display="block";cekBrix();}else{info.innerHTML="<span class='baru'>PLU baru, isi Desc & Supplier - Atau klik ➕ Tambah PLU Baru di atas</span>";kBox.style.display="none";MINBRIX=0;cekBrix();}}
 function setMode(m){MODE=m;document.getElementById('mFisik').className=m=='fisik'?'active':'';document.getElementById('mDetail').className=m=='detail'?'active':'';document.getElementById('mTelur').className=m=='telur'?'active':'';document.getElementById('mBrix').className=m=='brix'?'active':'';document.getElementById('boxFisik').style.display=m=='fisik'?'block':'none';document.getElementById('boxDetail').style.display=m=='detail'?'block':'none';document.getElementById('boxTelur').style.display=m=='telur'?'block':'none';document.getElementById('boxBrix').style.display=m=='brix'?'block':'none';document.getElementById('boxJam').style.display=m=='brix'?'block':'none';hitungSampling();}
 function setKes(v){KES=v;document.getElementById('btnTerima').className=v=='Di terima'?'active':'';document.getElementById('btnTolak').className='tolak '+(v=='Di tolak'?'active':'');}
 function setKesD(v){KESD=v;document.getElementById('btnTerimaD').className=v=='Di terima'?'active':'';document.getElementById('btnTolakD').className='tolak '+(v=='Di tolak'?'active':'');}
@@ -249,6 +252,7 @@ else{let tgl=fmtTgl2(document.getElementById('tgl').value);let item=(getVal('ite
 window._teks=teks;document.getElementById('hasilText').value=teks;document.getElementById('hasilBox').style.display="block";document.getElementById('hasilBox').scrollIntoView({behavior:"smooth"});return teks;}
 function kosongkan(){
 ['plu','item','sup','poKg','poCtn','terimaKg','terimaCtn','qtyTerima','tglProd','tglExp','noteAkhir'].forEach(id=>{let e=document.getElementById(id); if(e) e.value="";});
+document.getElementById('pilihPLU').value="";
 let nb=document.getElementById('noteB'); if(nb) nb.value="";
 for(let i=1;i<=20;i++){
 ['d'+i+'Brix','d'+i+'Taste','d'+i+'Biji','d'+i+'Kulit','d'+i+'Tekstur','s'+i,'b'+i,'c'+i].forEach(id=>{let e=document.getElementById(id); if(e) e.value="";});
