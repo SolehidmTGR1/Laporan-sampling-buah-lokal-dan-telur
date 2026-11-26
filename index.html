@@ -59,7 +59,7 @@ label{font-size:13px;color:#555;font-weight:bold}input,select,textarea{width:100
 <button class="btn purple" onclick="toggleKategori()">📋 Daftar Kategori & TIDAK Standard</button>
 <div id="boxKategori">
 <h3 style="margin:0 0 6px;color:#6A1B9A">📋 Daftar Kategori Sampling</h3>
-<label>Cari di Daftar Kategori</label><input id="cariKat" placeholder="Ketik PLU / Nama buah / telur..." oninput="tampilKategori()">
+<label>Cari di Daftar Kategori</label><input id="cariKat" placeholder="Ketik PLU / Nama buah / telur / retak / busuk..." oninput="tampilKategori()">
 <div id="isiKategori"></div>
 </div>
 <div id="boxTambah">
@@ -114,7 +114,7 @@ label{font-size:13px;color:#555;font-weight:bold}input,select,textarea{width:100
 <label>Tanggal Produksi</label><input type="date" id="tglProd">
 <label>Tanggal Expired</label><input type="date" id="tglExp">
 <label>Sisa Umur Telur</label>
-<select id="umurTelur"><option value="">-- Pilih --</option><option>27 hari / lebih - LOLOS</option><option>25 - 26 hari</option><option>Kurang dari 27 hari - TOLAK</option><option>200+ hari / 75% - LOLOS (Telur Gado)</option><option>Kurang dari 200 hari - TOLAK (Telur Gado)</option></select>
+<select id="umurTelur"><option value="">-- Pilih --</option><option>✅ 27 hari / lebih - LOLOS</option><option>❌ 25 - 26 hari - TIDAK STANDARD</option><option>❌ Kurang dari 27 hari - TOLAK</option><option>✅ 200+ hari / 75% - LOLOS (Telur Gado)</option><option>❌ Kurang dari 200 hari - TOLAK (Telur Gado)</option></select>
 <label>Kemasan</label><select id="tKemasan"></select>
 <label>Aroma</label><select id="tAroma"></select>
 <label>Kebersihan</label><select id="tKotor"></select>
@@ -122,7 +122,7 @@ label{font-size:13px;color:#555;font-weight:bold}input,select,textarea{width:100
 <label>Cangkang</label><select id="tCangkang"></select>
 <label>Warna</label><select id="tWarna"></select>
 <label>Laser / Stempel Omega</label><select id="tLaser"></select>
-<label>Keterangan</label><select id="ketT"><option>telur sesuai standard</option><option>telur tidak sesuai standard</option></select>
+<label>Keterangan</label><select id="ketT"><option>✅ telur sesuai standard</option><option>❌ telur tidak sesuai standard - TIDAK STANDARD</option></select>
 <label>Kesimpulan</label><div class="kes"><button id="btnTerimaT" class="active" onclick="setKesT('Di terima')">Di terima</button><button id="btnTolakT" class="tolak" onclick="setKesT('Di tolak')">Di tolak</button></div>
 </div>
 
@@ -131,21 +131,21 @@ label{font-size:13px;color:#555;font-weight:bold}input,select,textarea{width:100
 <div id="boxFisik" style="display:none">
 <label>Hasil Sampling - Fisik</label>
 <div id="fisikWrap"></div>
-<label>Keterangan</label><select id="ketF"><option>fisik buah sesuai standard</option><option>fisik buah tidak sesuai standard</option></select>
+<label>Keterangan</label><select id="ketF"><option>✅ fisik buah sesuai standard</option><option>❌ fisik buah tidak sesuai standard - TIDAK STANDARD</option></select>
 <label>Kesimpulan</label><div class="kes"><button id="btnTerima" class="active" onclick="setKes('Di terima')">Di terima</button><button id="btnTolak" class="tolak" onclick="setKes('Di tolak')">Di tolak</button></div>
 </div>
 
 <div id="boxDetail">
 <label>Hasil Sampling - Detail - Jumlah Otomatis Dari Qty Tiba</label>
 <div id="detailWrap"></div>
-<label>Keterangan</label><select id="ketD"><option>fisik buah sesuai standard</option><option>fisik buah tidak sesuai standard</option></select>
+<label>Keterangan</label><select id="ketD"><option>✅ fisik buah sesuai standard</option><option>❌ fisik buah tidak sesuai standard - TIDAK STANDARD</option></select>
 <label>Kesimpulan</label><div class="kes"><button id="btnTerimaD" class="active" onclick="setKesD('Di terima')">Di terima</button><button id="btnTolakD" class="tolak" onclick="setKesD('Di tolak')">Di tolak</button></div>
 </div>
 
 <div id="boxBrix" style="display:none">
 <label>Hasil Tes Brix - Jumlah Otomatis Dari Qty Tiba</label>
 <div id="brixWrap"></div>
-<label>Keterangan</label><select id="ketB"><option>brix tidak masuk std minimal 9% (Fisik Ditolak)</option><option>brix masuk std minimal 9%</option><option>brix tidak masuk std minimal 8% (Fisik Ditolak)</option><option>brix tidak masuk std minimal 13% (Fisik Ditolak)</option></select>
+<label>Keterangan</label><select id="ketB"><option>❌ brix tidak masuk std minimal 9% (Fisik Ditolak)</option><option>✅ brix masuk std minimal 9%</option><option>❌ brix tidak masuk std minimal 8% (Fisik Ditolak)</option><option>❌ brix tidak masuk std minimal 13% (Fisik Ditolak)</option></select>
 <label>Note</label><select id="noteB"><option value="">- Kosong -</option><option>Konfirmasi BM/DBM</option><option>Follow up MD</option></select>
 </div>
 
@@ -166,15 +166,19 @@ let MODE='detail', KES='Di terima', KESD='Di terima', KEST='Di terima', MINBRIX=
 let TABEL={semangka:[1,2,3,5], melon:[1,2,3,5], pepaya:[1,2,3,5], mangga:[5,7,10,15], manggis:[10,10,15,20]};
 function grupDariItem(nama){nama=(nama||'').toLowerCase();if(nama.includes('semangka'))return 'semangka';if(nama.includes('melon'))return 'melon';if(nama.includes('pepaya'))return 'pepaya';if(nama.includes('mangga'))return 'mangga';if(nama.includes('manggis'))return 'manggis';return 'lain';}
 function hitungJmlDariQty(qty, grup){if(grup==='lain')return null;let idx= qty<300?0 : qty<=500?1 : qty<=1000?2 : 3;return TABEL[grup][idx];}
-let BRIX_OPTS=["","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20","petik tua pohon"];
-let OPT={taste:["","rasa manis dan beraroma segar","manis dan juicy","segar rasa manis dan juicy","petik tua","petik tua pohon"],biji:["","biji tidak rontok dan tidak berair","tidak rontok dan tidak berair","merah tanpa biji","kuning tanpa biji","daging juicy tidak berulat","putih semburat merah"],kulit:["","kehijauan","hijau dan kekuningan","hijau tua (kasar)","tebal dan hijau","tebal dan hijau muda","sirip hijau segar","textur keras"],tekstur:["","keras","keras dan tebal","kencang","crispy dan juicy","orange"],fisik:["","step 3-4, hijau sedikit semburat kuning","step 3-4,hijau sedikit semburat kuning","step 2-3, hijau sedikit semburat kuning","step 2-3,hijau sedikit semburat kuning","petik tua pohon,kulit hijau bersih,daging menguning","petik tua pohon.daging kuning","petik tua pohon. Daging kuning"],
-tKemasan:["","Mika bening berkancing / tidak berkancing, terstaples rapat, berlabel tgl produksi & expired","Mika bening berkancing / kardus tebal berbentuk, berlabel merk, tgl produksi & expired","Mika bening berkancing, berlabel merk, tgl produksi & expired","Karton bermerk, dalaman busa, tgl produksi & expired","Mika bening berkancing berbentuk, berlabel merk, tgl produksi & expired","Kemasan vacuum per butir, berlabel merk, tgl produksi & expired, box terlapis plastik"],
-tAroma:["","Aroma tidak menyimpang / normal","Berbau / menyimpang"],tKotor:["","Bersih tanpa kotoran","Kotor / berjamur / berbelatung"],tRetak:["","Tidak retak / tidak pecah","Retak / pecah"],tCangkang:["","Cangkang mulus","Cangkang tidak mulus"],tWarna:["","Warna coklat gelap","Warna putih susu","Warna putih","Warna coklat gelap - sesuai","Warna putih susu - sesuai"],tLaser:["","Terlaser / stempel tanda omega","Tidak laser / tidak stempel omega","Tidak perlu laser - bukan omega"]};
+let BRIX_OPTS=["","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20","✅ petik tua pohon","❌ petik muda / mentah - TIDAK STANDARD"];
+let OPT={taste:["","✅ rasa manis dan beraroma segar","✅ manis dan juicy","✅ segar rasa manis dan juicy","✅ petik tua","✅ petik tua pohon","❌ taste asam / hambar - TIDAK STANDARD","❌ aroma busuk - TIDAK STANDARD","❌ berbau menyimpang - TIDAK STANDARD","❌ taste tidak manis / asam - TIDAK STANDARD"],
+biji:["","✅ biji tidak rontok dan tidak berair","✅ tidak rontok dan tidak berair","✅ merah tanpa biji","✅ kuning tanpa biji","✅ daging juicy tidak berulat","✅ putih semburat merah","❌ biji rontok dan berair - TIDAK STANDARD","❌ biji rontok + berair + aroma busuk - TIDAK STANDARD","❌ daging lembek / busuk / berulat - TIDAK STANDARD","❌ daging berair / busuk - TIDAK STANDARD","❌ banyak biji tua / hitam - TIDAK STANDARD","❌ daging tipis / putih / mentah - TIDAK STANDARD"],
+kulit:["","✅ kehijauan","✅ hijau dan kekuningan","✅ hijau tua (kasar)","✅ tebal dan hijau","✅ tebal dan hijau muda","✅ sirip hijau segar","✅ textur keras","❌ kulit busuk / berjamur - TIDAK STANDARD","❌ kulit hitam / busuk - TIDAK STANDARD","❌ kulit basah / busuk - TIDAK STANDARD","❌ kulit pecah / busuk - TIDAK STANDARD","❌ sirip coklat / busuk - TIDAK STANDARD"],
+tekstur:["","✅ keras","✅ keras dan tebal","✅ kencang","✅ crispy dan juicy","✅ orange","✅ lembut","❌ lembek - TIDAK STANDARD","❌ busuk - TIDAK STANDARD","❌ daging lembek / busuk - TIDAK STANDARD","❌ terlalu matang / lembek - TIDAK STANDARD"],
+fisik:["","✅ step 3-4, hijau sedikit semburat kuning","✅ step 3-4,hijau sedikit semburat kuning","✅ step 2-3, hijau sedikit semburat kuning","✅ step 2-3,hijau sedikit semburat kuning","✅ petik tua pohon,kulit hijau bersih,daging menguning","✅ petik tua pohon.daging kuning","✅ petik tua pohon. Daging kuning","❌ step 1-2 / mentah - TIDAK STANDARD","❌ step 5+ / terlalu matang - TIDAK STANDARD","❌ kulit hitam / busuk - TIDAK STANDARD","❌ kulit busuk / berjamur - TIDAK STANDARD","❌ daging lembek / busuk - TIDAK STANDARD"],
+tKemasan:["","✅ Mika bening berkancing / tidak berkancing, terstaples rapat, berlabel tgl produksi & expired","✅ Mika bening berkancing / kardus tebal berbentuk, berlabel merk, tgl produksi & expired","✅ Mika bening berkancing, berlabel merk, tgl produksi & expired","✅ Karton bermerk, dalaman busa, tgl produksi & expired","✅ Mika bening berkancing berbentuk, berlabel merk, tgl produksi & expired","✅ Kemasan vacuum per butir, berlabel merk, tgl produksi & expired, box terlapis plastik","❌ Kemasan tidak rapat - TIDAK STANDARD","❌ Tidak berlabel produksi & expired - TIDAK STANDARD","❌ Vacuum terbuka / rusak - TIDAK STANDARD"],
+tAroma:["","✅ Aroma tidak menyimpang / normal","❌ Berbau / menyimpang - TIDAK STANDARD","❌ Aroma busuk - TIDAK STANDARD"],tKotor:["","✅ Bersih tanpa kotoran","❌ Kotor / berjamur / berbelatung - TIDAK STANDARD","❌ Kotor - TIDAK STANDARD"],tRetak:["","✅ Tidak retak / tidak pecah","❌ Retak / pecah - TIDAK STANDARD"],tCangkang:["","✅ Cangkang mulus","❌ Cangkang tidak mulus - TIDAK STANDARD","❌ Cangkang retak - TIDAK STANDARD"],tWarna:["","✅ Warna coklat gelap","✅ Warna putih susu","✅ Warna putih","✅ Warna coklat gelap - sesuai","✅ Warna putih susu - sesuai","❌ Warna tidak sesuai / pucat / kotor - TIDAK STANDARD"],tLaser:["","✅ Terlaser / stempel tanda omega","❌ Tidak laser / tidak stempel omega - TIDAK STANDARD","✅ Tidak perlu laser - bukan omega"]};
 function optHTML(arr){return arr.map(v=>"<option value='"+v+"'>"+(v===""?"-- Pilih --":v)+"</option>").join('');}
 function buildSampling(){let n=JML_SAMPLING||1;
-let dWrap=document.getElementById('detailWrap');let dHTML='';for(let i=1;i<=n;i++){dHTML+="<label>Sampling "+i+" - Detail</label><div class='box'><label>Brix / Kematangan</label><select id='d"+i+"Brix' onchange='cekBrix()'>"+optHTML(BRIX_OPTS)+"</select><label>Taste / Aroma</label><select id='d"+i+"Taste'>"+optHTML(OPT.taste)+"</select><label>Bagian Tengah / Biji / Daging</label><select id='d"+i+"Biji'>"+optHTML(OPT.biji)+"</select><label>Kulit</label><select id='d"+i+"Kulit'>"+optHTML(OPT.kulit)+"</select><label>Tekstur</label><select id='d"+i+"Tekstur'>"+optHTML(OPT.tekstur)+"</select></div>";}dWrap.innerHTML=dHTML;
-let fWrap=document.getElementById('fisikWrap');let fHTML='';for(let i=1;i<=n;i++){fHTML+="<div class='box'><div class='samplingTitle'>Sampling "+i+"</div><select id='s"+i+"'>"+optHTML(OPT.fisik)+"</select></div>";}fWrap.innerHTML=fHTML;
-let bWrap=document.getElementById('brixWrap');let bHTML="<div class='box'>";for(let i=1;i<=n;i++){bHTML+="<div class='brix-row'><b>Sampling "+i+"</b><select id='b"+i+"'>"+optHTML(BRIX_OPTS.slice(0,16))+"</select><select id='sb"+i+"'><option value='No Ok'>No Ok</option><option value='Ok'>Ok</option><option value=''>- Kosong -</option></select></div><select id='c"+i+"'><option value=''>- Tanpa Catatan -</option><option>Brix tidak masuk std</option><option>Fisik Ditolak</option></select>";}bHTML+="</div>";bWrap.innerHTML=bHTML;}
+let dWrap=document.getElementById('detailWrap');let dHTML='';for(let i=1;i<=n;i++){dHTML+="<label>Sampling "+i+" - Detail - ✅ Standard + ❌ TIDAK Standard bisa dipilih</label><div class='box'><label>Brix / Kematangan</label><select id='d"+i+"Brix' onchange='cekBrix()'>"+optHTML(BRIX_OPTS)+"</select><label>Taste / Aroma</label><select id='d"+i+"Taste'>"+optHTML(OPT.taste)+"</select><label>Bagian Tengah / Biji / Daging</label><select id='d"+i+"Biji'>"+optHTML(OPT.biji)+"</select><label>Kulit</label><select id='d"+i+"Kulit'>"+optHTML(OPT.kulit)+"</select><label>Tekstur</label><select id='d"+i+"Tekstur'>"+optHTML(OPT.tekstur)+"</select></div>";}dWrap.innerHTML=dHTML;
+let fWrap=document.getElementById('fisikWrap');let fHTML='';for(let i=1;i<=n;i++){fHTML+="<div class='box'><div class='samplingTitle'>Sampling "+i+" - ✅ + ❌ TIDAK Standard</div><select id='s"+i+"'>"+optHTML(OPT.fisik)+"</select></div>";}fWrap.innerHTML=fHTML;
+let bWrap=document.getElementById('brixWrap');let bHTML="<div class='box'>";for(let i=1;i<=n;i++){bHTML+="<div class='brix-row'><b>Sampling "+i+"</b><select id='b"+i+"'>"+optHTML(BRIX_OPTS.slice(0,16))+"</select><select id='sb"+i+"'><option value='✅ Ok'>✅ Ok</option><option value='❌ No Ok - TIDAK STANDARD'>❌ No Ok - TIDAK STANDARD</option><option value=''>- Kosong -</option></select></div><select id='c"+i+"'><option value=''>- Tanpa Catatan -</option><option>❌ Brix tidak masuk std - TIDAK STANDARD</option><option>❌ Fisik Ditolak - TIDAK STANDARD</option></select>";}bHTML+="</div>";bWrap.innerHTML=bHTML;}
 function isiTelur(){['tKemasan','tAroma','tKotor','tRetak','tCangkang','tWarna','tLaser'].forEach(id=>{let el=document.getElementById(id);let arr=OPT.tKemasan;if(id==='tAroma')arr=OPT.tAroma;if(id==='tKotor')arr=OPT.tKotor;if(id==='tRetak')arr=OPT.tRetak;if(id==='tCangkang')arr=OPT.tCangkang;if(id==='tWarna')arr=OPT.tWarna;if(id==='tLaser')arr=OPT.tLaser;el.innerHTML=optHTML(arr);});}
 let TIDAK_TELUR=["Sisa umur < 27 hari (Gado < 200 hari)","Retak / Pecah","Kotor / Berjamur / Berbelatung","Berbau menyimpang","Cangkang tidak mulus","Tidak terlaser / stempel (khusus Omega)","Kemasan tidak rapat / tidak berlabel produksi & expired","Vacuum terbuka / rusak (khusus Gado)"];
 let TIDAK_TELUR_BIASA=["Sisa umur < 27 hari","Retak / Pecah","Kotor / Berjamur / Berbelatung","Berbau menyimpang","Cangkang tidak mulus","Kemasan tidak rapat / tidak berlabel"];
@@ -301,7 +305,7 @@ document.getElementById('pilihPLU').value="";
 let nb=document.getElementById('noteB'); if(nb) nb.value="";
 for(let i=1;i<=20;i++){
 ['d'+i+'Brix','d'+i+'Taste','d'+i+'Biji','d'+i+'Kulit','d'+i+'Tekstur','s'+i,'b'+i,'c'+i].forEach(id=>{let e=document.getElementById(id); if(e) e.value="";});
-let sb=document.getElementById('sb'+i); if(sb) sb.value="No Ok";
+let sb=document.getElementById('sb'+i); if(sb) sb.value="✅ Ok";
 }
 ['tKemasan','tAroma','tKotor','tRetak','tCangkang','tWarna','tLaser','umurTelur'].forEach(id=>{let e=document.getElementById(id); if(e) e.value="";});
 document.getElementById('pluInfo').innerHTML="";
